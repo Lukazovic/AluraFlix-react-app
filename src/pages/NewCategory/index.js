@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import useForm from "../../hooks/useForm";
+import Api from "../../services/api";
 
 import PageDefault from "../../components/PageDefault";
 import FormField from "../../components/FormField";
 
 // import { Container } from './styles';
-
-const BASE_URL = "http://localhost:3333";
 
 function NewCategory() {
   const initialValues = {
@@ -30,14 +29,24 @@ function NewCategory() {
   };
 
   useEffect(() => {
-    setLoading(true);
-    fetch(`${BASE_URL}/categories`)
-      .then((response) => response.json())
-      .then((body) => {
-        setCategories([...body]);
-        setLoading(false);
-      });
+    const loadData = async () => {
+      setLoading(true);
+      const response = await Api.getCategories();
+      setCategories([...response]);
+      setLoading(false);
+    };
+    loadData();
   }, []);
+
+  // useEffect(() => {
+  //   setLoading(true);
+  //   fetch(`${BASE_URL}/categories`)
+  //     .then((response) => response.json())
+  //     .then((body) => {
+  //       setCategories([...body]);
+  //       setLoading(false);
+  //     });
+  // }, []);
 
   return (
     <PageDefault>
