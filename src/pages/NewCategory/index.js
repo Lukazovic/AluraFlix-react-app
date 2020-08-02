@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import useForm from "../../hooks/useForm";
 
 import PageDefault from "../../components/PageDefault";
 import FormField from "../../components/FormField";
@@ -9,27 +10,23 @@ import FormField from "../../components/FormField";
 const BASE_URL = "http://localhost:3333";
 
 function NewCategory() {
-  const [categories, setCategories] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [newcategory, setNewCategory] = useState({
+  const initialValues = {
     name: "",
     description: "",
     color: "#000000",
-  });
-  const { name, description, color } = newcategory;
-
-  const handleValueChange = ({ target: { name, value } }) => {
-    setNewCategory({ ...newcategory, [name]: value });
   };
+  const [categories, setCategories] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const {
+    value: newCategory,
+    handleChange,
+    resetValues: resetCategoryValues,
+  } = useForm(initialValues);
+  const { name, description, color } = newCategory;
 
   const handleSubmit = (evt) => {
     evt.preventDefault();
-    setCategories([...categories, newcategory]);
-    setNewCategory({
-      name: "",
-      description: "",
-      color: "#000000",
-    });
+    resetCategoryValues();
   };
 
   useEffect(() => {
@@ -39,7 +36,6 @@ function NewCategory() {
       .then((body) => {
         setCategories([...body]);
         setLoading(false);
-        console.log(body);
       });
   }, []);
 
@@ -53,7 +49,7 @@ function NewCategory() {
           type="text"
           name="name"
           value={name}
-          onChange={handleValueChange}
+          onChange={handleChange}
         />
 
         <FormField
@@ -61,7 +57,7 @@ function NewCategory() {
           type="textarea"
           name="description"
           value={description}
-          onChange={handleValueChange}
+          onChange={handleChange}
         />
 
         <FormField
@@ -69,7 +65,7 @@ function NewCategory() {
           type="color"
           name="color"
           value={color}
-          onChange={handleValueChange}
+          onChange={handleChange}
         />
 
         <button type="submit">Cadastar</button>
