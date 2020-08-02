@@ -1,17 +1,20 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 
-import PageDefault from '../../components/PageDefault';
-import FormField from '../../components/FormField';
+import PageDefault from "../../components/PageDefault";
+import FormField from "../../components/FormField";
 
 // import { Container } from './styles';
 
+const BASE_URL = "http://localhost:3333";
+
 function NewCategory() {
   const [categories, setCategories] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [newcategory, setNewCategory] = useState({
-    name: '',
-    description: '',
-    color: '#000000',
+    name: "",
+    description: "",
+    color: "#000000",
   });
   const { name, description, color } = newcategory;
 
@@ -19,15 +22,26 @@ function NewCategory() {
     setNewCategory({ ...newcategory, [name]: value });
   };
 
-  const handleSubmit = evt => {
+  const handleSubmit = (evt) => {
     evt.preventDefault();
     setCategories([...categories, newcategory]);
     setNewCategory({
-      name: '',
-      description: '',
-      color: '#000000',
+      name: "",
+      description: "",
+      color: "#000000",
     });
   };
+
+  useEffect(() => {
+    setLoading(true);
+    fetch(`${BASE_URL}/categories`)
+      .then((response) => response.json())
+      .then((body) => {
+        setCategories([...body]);
+        setLoading(false);
+        console.log(body);
+      });
+  }, []);
 
   return (
     <PageDefault>
@@ -58,50 +72,22 @@ function NewCategory() {
           onChange={handleValueChange}
         />
 
-        {/* <div>
-          <label htmlFor="name">Nome da categoria: </label>
-          <input
-            type="text"
-            id="name"
-            name="name"
-            value={name}
-            onChange={handleValueChange}
-          />
-        </div> */}
-
-        {/* <div>
-          <label htmlFor="description">Descrição: </label>
-          <textarea
-            type="text"
-            id="description"
-            name="description"
-            value={description}
-            onChange={handleValueChange}
-          />
-        </div>
-
-        <div>
-          <label htmlFor="color">Descrição: </label>
-          <input
-            type="color"
-            id="color"
-            name="color"
-            value={color}
-            onChange={handleValueChange}
-          />
-        </div> */}
-
         <button type="submit">Cadastar</button>
       </form>
 
+      <h1>Categorias</h1>
+
       <ul>
-        {categories.map(({ name, description, color }, index) => (
-          <li key={`${name}${index}`}>
-            <p>{name}</p>
-            <p>{description}</p>
-            <p>{color}</p>
-          </li>
-        ))}
+        {loading ? (
+          <h3>Loading</h3>
+        ) : (
+          categories.map(({ id, title, color }) => (
+            <li key={id}>
+              <p>{title}</p>
+              <p>{color}</p>
+            </li>
+          ))
+        )}
       </ul>
 
       <Link to="/">Home</Link>
