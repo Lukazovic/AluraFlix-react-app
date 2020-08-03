@@ -25,7 +25,7 @@ class Api {
   addNewCategory() {}
 
   async addNewVideo(data) {
-    return fetch(`${BASE_URL}/categories?_embed=videos`, {
+    return fetch(`${BASE_URL}/videos`, {
       method: 'post',
       headers: {
         'Content-type': 'application/json',
