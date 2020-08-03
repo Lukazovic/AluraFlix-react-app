@@ -1,26 +1,39 @@
-import React from 'react';
+import React, { useState, useEffect } from "react";
 
-import PageDefault from '../../components/PageDefault';
+import PageDefault from "../../components/PageDefault";
+import BannerMain from "../../components/BannerMain";
+import Carousel from "../../components/Carousel";
 
-import BannerMain from '../../components/BannerMain';
-import Carousel from '../../components/Carousel';
-
-import dadosIniciais from '../../data/dados_iniciais.json';
+import Api from "../../services/api";
 
 function Home() {
-  return (
-    <PageDefault>
-      <BannerMain
-        videoTitle={dadosIniciais.categorias[0].videos[0].titulo}
-        url={dadosIniciais.categorias[0].videos[0].url}
-        videoDescription={
-          'O que é Front-end? Trabalhando na área os termos HTML, CSS e JavaScript fazem parte da rotina das desenvolvedoras e desenvolvedores. Mas o que eles fazem, afinal? Descubra com a Vanessa!'
-        }
-      />
+  const [categories, setCategories] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-      {dadosIniciais.categorias.map((category, index) => (
+  useEffect(() => {
+    const loadData = async () => {
+      setLoading(true);
+      const response = await Api.getCategoriesWithVideos();
+      setCategories(response);
+      setLoading(false);
+    };
+    loadData();
+  }, []);
+
+  if (loading) {
+    return (
+      <PageDefault>
+        <h1>Loading</h1>
+      </PageDefault>
+    );
+  }
+  return (
+    <PageDefault paddingAll={0}>
+      <BannerMain />
+
+      {categories.map((category, index) => (
         <Carousel
-          key={index}
+          key={category.id}
           ignoreFirstVideo={index === 0 ? true : false}
           category={category}
         />

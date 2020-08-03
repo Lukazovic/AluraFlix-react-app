@@ -1,46 +1,39 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import useForm from "../../hooks/useForm";
+import Api from "../../services/api";
 
 import PageDefault from "../../components/PageDefault";
 import FormField from "../../components/FormField";
-
-// import { Container } from './styles';
-
-const BASE_URL = "http://localhost:3333";
+import Button from "../../components/Button";
 
 function NewCategory() {
-  const [categories, setCategories] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [newcategory, setNewCategory] = useState({
+  const initialValues = {
     name: "",
     description: "",
     color: "#000000",
-  });
-  const { name, description, color } = newcategory;
-
-  const handleValueChange = ({ target: { name, value } }) => {
-    setNewCategory({ ...newcategory, [name]: value });
   };
+  const [categories, setCategories] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const {
+    value: newCategory,
+    handleChange,
+    resetValues: resetCategoryValues,
+  } = useForm(initialValues);
+  const { name, description, color } = newCategory;
 
   const handleSubmit = (evt) => {
     evt.preventDefault();
-    setCategories([...categories, newcategory]);
-    setNewCategory({
-      name: "",
-      description: "",
-      color: "#000000",
-    });
+    resetCategoryValues();
   };
 
   useEffect(() => {
-    setLoading(true);
-    fetch(`${BASE_URL}/categories`)
-      .then((response) => response.json())
-      .then((body) => {
-        setCategories([...body]);
-        setLoading(false);
-        console.log(body);
-      });
+    const loadData = async () => {
+      setLoading(true);
+      const response = await Api.getCategories();
+      setCategories([...response]);
+      setLoading(false);
+    };
+    loadData();
   }, []);
 
   return (
@@ -53,7 +46,7 @@ function NewCategory() {
           type="text"
           name="name"
           value={name}
-          onChange={handleValueChange}
+          onChange={handleChange}
         />
 
         <FormField
@@ -61,7 +54,7 @@ function NewCategory() {
           type="textarea"
           name="description"
           value={description}
-          onChange={handleValueChange}
+          onChange={handleChange}
         />
 
         <FormField
@@ -69,10 +62,10 @@ function NewCategory() {
           type="color"
           name="color"
           value={color}
-          onChange={handleValueChange}
+          onChange={handleChange}
         />
 
-        <button type="submit">Cadastar</button>
+        <Button type="submit">Cadastar</Button>
       </form>
 
       <h1>Categorias</h1>
@@ -83,14 +76,12 @@ function NewCategory() {
         ) : (
           categories.map(({ id, title, color }) => (
             <li key={id}>
-              <p>{title}</p>
-              <p>{color}</p>
+              <strong>Título: {title}</strong>
+              <p>Cor: {color}</p>
             </li>
           ))
         )}
       </ul>
-
-      <Link to="/">Home</Link>
     </PageDefault>
   );
 }
