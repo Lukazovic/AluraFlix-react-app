@@ -5,7 +5,6 @@ import BannerMain from "../../components/BannerMain";
 import Carousel from "../../components/Carousel";
 
 import Api from "../../services/api";
-import dadosIniciais from "../../data/dados_iniciais.json";
 
 function Home() {
   const [categories, setCategories] = useState([]);
@@ -28,16 +27,9 @@ function Home() {
       </PageDefault>
     );
   }
-
   return (
-    <PageDefault>
-      <BannerMain
-        videoTitle={categories[0].videos[1].title}
-        url={categories[0].videos[1].url}
-        videoDescription={
-          "O que é Front-end? Trabalhando na área os termos HTML, CSS e JavaScript fazem parte da rotina das desenvolvedoras e desenvolvedores. Mas o que eles fazem, afinal? Descubra com a Vanessa!"
-        }
-      />
+    <PageDefault paddingAll={0}>
+      <BannerMain />
 
       {categories.map((category, index) => (
         <Carousel
