@@ -1,12 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
 import useForm from "../../hooks/useForm";
 import Api from "../../services/api";
 
 import PageDefault from "../../components/PageDefault";
 import FormField from "../../components/FormField";
-
-// import { Container } from './styles';
+import Button from "../../components/Button";
 
 function NewCategory() {
   const initialValues = {
@@ -38,16 +36,6 @@ function NewCategory() {
     loadData();
   }, []);
 
-  // useEffect(() => {
-  //   setLoading(true);
-  //   fetch(`${BASE_URL}/categories`)
-  //     .then((response) => response.json())
-  //     .then((body) => {
-  //       setCategories([...body]);
-  //       setLoading(false);
-  //     });
-  // }, []);
-
   return (
     <PageDefault>
       <h1>Cadastro de categoria: {name}</h1>
@@ -77,7 +65,7 @@ function NewCategory() {
           onChange={handleChange}
         />
 
-        <button type="submit">Cadastar</button>
+        <Button type="submit">Cadastar</Button>
       </form>
 
       <h1>Categorias</h1>
@@ -88,14 +76,12 @@ function NewCategory() {
         ) : (
           categories.map(({ id, title, color }) => (
             <li key={id}>
-              <p>{title}</p>
-              <p>{color}</p>
+              <strong>Título: {title}</strong>
+              <p>Cor: {color}</p>
             </li>
           ))
         )}
       </ul>
-
-      <Link to="/">Home</Link>
     </PageDefault>
   );
 }
