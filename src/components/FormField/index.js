@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 
 import { Container, Label, Input } from "./styles";
 
-function FormField({ label, type, name, value, onChange }) {
+function FormField({ label, type, name, value, onChange, required }) {
   return (
     <Container>
       <Label htmlFor={`id_${name}`}>
@@ -14,6 +14,7 @@ function FormField({ label, type, name, value, onChange }) {
           name={name}
           value={value}
           onChange={onChange}
+          required={required}
         />
         <Label.Text>{label}:</Label.Text>
       </Label>
@@ -25,6 +26,7 @@ FormField.defautProps = {
   type: "text",
   value: "",
   onChange: () => {},
+  required: false,
 };
 
 FormField.propTypes = {
@@ -33,6 +35,7 @@ FormField.propTypes = {
   name: PropTypes.string.isRequired,
   value: PropTypes.string,
   onChange: PropTypes.func,
+  required: PropTypes.bool,
 };
 
 export default FormField;
