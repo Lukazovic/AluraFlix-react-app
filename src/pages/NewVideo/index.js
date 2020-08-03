@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import useForm from '../../hooks/useForm';
 import Api from '../../services/api';
@@ -11,15 +11,16 @@ function NewVideo() {
   const history = useHistory();
   const [categories, setCategories] = useState([]);
   const initialValues = {
-    name: '',
+    title: '',
     url: '',
+    categoryTitle: '',
   };
   const {
     value: newCategory,
     handleChange,
     resetValues: resetCategoryValues,
   } = useForm(initialValues);
-  const { name, url } = newCategory;
+  const { title, url, categoryTitle } = newCategory;
 
   useEffect(() => {
     const loadData = async () => {
@@ -29,17 +30,24 @@ function NewVideo() {
     loadData();
   }, []);
 
-  const handleSubmit = useCallback((evt) => {
+  const handleSubmit = (evt) => {
     evt.preventDefault();
 
     const saveVideo = async () => {
-      await Api.addNewVideo(newCategory);
-      alert('O video foi adicionado com sucesso!');
-      resetCategoryValues();
-      history.push();
+      const category = categories.find(
+        (oldCategory) => oldCategory.title === categoryTitle
+      );
+      if (!category) {
+        alert('Categoria Indexistente!');
+      } else {
+        await Api.addNewVideo({ title, url, categoryId: category.id });
+        alert('O video foi adicionado com sucesso!');
+        resetCategoryValues();
+        history.push();
+      }
     };
     saveVideo();
-  }, []);
+  };
 
   return (
     <PageDefault>
@@ -49,8 +57,8 @@ function NewVideo() {
         <FormField
           label="Nome da categoria"
           type="text"
-          name="name"
-          value={name}
+          name="title"
+          value={title}
           onChange={handleChange}
           required
         />
@@ -64,19 +72,17 @@ function NewVideo() {
           required
         />
 
-        <div>
-          <label htmlFor="category"></label>
-          <select name="select" id="category" required>
-            <option value="" defaultValue>
-              Selecione uma Categoria
-            </option>
-            {categories.map(({ id, title }) => (
-              <option key={id} value={id}>
-                {title}
-              </option>
-            ))}
-          </select>
-        </div>
+        <FormField
+          label="Categoria"
+          type="text"
+          name="categoryTitle"
+          value={categoryTitle}
+          onChange={handleChange}
+          suggestions={categories.map(
+            (existentCategory) => existentCategory.title
+          )}
+          required
+        />
 
         <Button type="submit">Cadastar</Button>
       </form>
